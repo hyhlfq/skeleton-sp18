@@ -1,6 +1,6 @@
 public class NBody {
 
-    public static String background = "./images/starfield.jpg";
+    private static String background = "./images/starfield.jpg";
 
     public static double readRadius(String fileName) {
         In in = new In(fileName);
@@ -42,7 +42,7 @@ public class NBody {
             StdDraw.picture(-0, 0, background);
             for (int i = 0; i < planetNum; i++) {
                 planets[i].update(dt, xForces[i], yForces[i]);
-                StdDraw.picture(planets[i].xxPos, planets[i].yyPos, "./images/" + planets[i].imgFileName);
+                planets[i].draw();
             }
             StdDraw.show();
             StdDraw.pause(10);
