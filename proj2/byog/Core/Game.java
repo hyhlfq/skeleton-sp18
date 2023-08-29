@@ -28,11 +28,18 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
-        // and return a 2D tile representation of the world that would have been
-        // drawn if the same inputs had been given to playWithKeyboard().
+        long seed = inputToSeed(input);
+        World world = new World(seed, WIDTH, HEIGHT);
+        return world.getFrame();
+    }
 
-        TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+    private long inputToSeed(String input) {
+        String seedString = "";
+        for (int i = 0; i < input.length(); i++) {
+            if (Character.isDigit(input.charAt(i))) {
+                seedString += input.charAt(i);
+            }
+        }
+        return Long.parseLong(seedString);
     }
 }
