@@ -120,7 +120,7 @@ public class World {
         }
     }
 
-   private void addDoor() {
+    private void addDoor() {
         while (true) {
             int doorX = RandomUtils.uniform(RANDOM, 1, world.length - 1);
             int doorY = RandomUtils.uniform(RANDOM, 1, world[0].length - 1);
