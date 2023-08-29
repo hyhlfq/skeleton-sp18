@@ -1,10 +1,10 @@
 package byog.Core;
 
 public class Room {
-    public int width;
-    public int height;
-    public int x;
-    public int y;
+    private int width;
+    private int height;
+    private int x;
+    private int y;
 
     public Room(int x, int y, int width, int height) {
         this.x = x;
@@ -16,5 +16,21 @@ public class Room {
     boolean isOverlap(Room other) {
         return (Math.min(x + width, other.x + other.width) >= Math.max(x, other.x) + 1)
                 && (Math.min(y + height, other.y + other.height) >= Math.max(y, other.y) + 1);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }
