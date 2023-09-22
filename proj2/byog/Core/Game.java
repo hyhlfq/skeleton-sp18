@@ -60,13 +60,13 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        if (input.charAt(0) == 'N') {
+        if (input.charAt(0) == 'n') {
             int seedEndIndex = getSeedEndIndex(input.substring(1));
             long seed = Long.parseLong(input.substring(1, seedEndIndex));
             world = new World(seed, WIDTH, HEIGHT);
             playByInput(input.substring(seedEndIndex + 2));
             return world.getFrame();
-        } else if (input.charAt(0) == 'L') {
+        } else if (input.charAt(0) == 'l') {
             world = loadGame();
             playByInput(input.substring(1));
             return world.getFrame();
@@ -86,11 +86,11 @@ public class Game {
     private void playByInput(String input) {
         for (int i = 0; i < input.length(); i++) {
             char key = input.charAt(i);
-            if (key == 'W' || key == 'A' || key == 'S' || key == 'D') {
+            if (key == 'w' || key == 'a' || key == 's' || key == 'd') {
                 if (world.movePlayer(Character.toLowerCase(key)) == 1) { // player wins
                     break;
                 }
-            } else if (key == 'Q') {
+            } else if (key == 'q') {
                 saveGame(world);
                 break;
             }

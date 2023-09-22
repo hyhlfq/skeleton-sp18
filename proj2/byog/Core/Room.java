@@ -2,7 +2,7 @@ package byog.Core;
 
 import java.io.Serializable;
 
-public class Room implements Serializable{
+public class Room implements Serializable {
     private int width;
     private int height;
     private int x;
