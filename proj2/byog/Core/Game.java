@@ -2,9 +2,7 @@ package byog.Core;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -98,45 +96,28 @@ public class Game {
     }
 
     private void saveGame(World w) {
-        File f = new File("./world.ser");
         try {
-            if (!f.exists()) {
-                f.createNewFile();
-            }
-            FileOutputStream fs = new FileOutputStream(f);
-            ObjectOutputStream os = new ObjectOutputStream(fs);
-            os.writeObject(w);
-            os.close();
-        }  catch (FileNotFoundException e) {
-            System.out.println("file not found");
-            System.exit(0);
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("world.ser"));
+            out.writeObject(w);
+            out.close();
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
             System.exit(0);
         }
     }
 
     private World loadGame() {
-        File f = new File("./world.ser");
-        if (f.exists()) {
-            try {
-                FileInputStream fs = new FileInputStream(f);
-                ObjectInputStream os = new ObjectInputStream(fs);
-                World loadWorld = (World) os.readObject();
-                os.close();
-                return loadWorld;
-            } catch (FileNotFoundException e) {
-                System.out.println("file not found");
-                System.exit(0);
-            } catch (IOException e) {
-                System.out.println(e);
-                System.exit(0);
-            } catch (ClassNotFoundException e) {
-                System.out.println("class not found");
-                System.exit(0);
-            }
+        World w = null;
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream("world.ser"));
+            w = (World) in.readObject();
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return null;
+        return w;
     }
 
     private void drawMenu() {
