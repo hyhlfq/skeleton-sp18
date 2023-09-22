@@ -1,18 +1,30 @@
 package byog.Core;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-public class World {
+public class World implements Serializable {
     private static final int MINROOMSIZE = 2;
     private static final int MAXROOMSIZE = 8;
     private Random RANDOM;
     private TETile[][] world;
     private Room[] rooms;
     private int roomsNum;
+    private Position player;
+
+    private class Position implements Serializable {
+        int x;
+        int y;
+
+        Position(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     public World(long seed, int width, int height) {
         RANDOM = new Random(seed);
@@ -31,6 +43,7 @@ public class World {
         addhallways();
         fillWalls();
         addDoor();
+        player = addPlayer();
     }
 
     private void addRooms() {
@@ -90,29 +103,29 @@ public class World {
     private void fillWalls() {
         for (int x = 1; x < world.length; x += 1) {
             for (int y = 1; y < world[0].length; y += 1) {
-                if (world[x][y] == Tileset.FLOOR) {
-                    if (world[x - 1][y] == Tileset.NOTHING) {
+                if (world[x][y].equals(Tileset.FLOOR)) {
+                    if (world[x - 1][y].equals(Tileset.NOTHING)) {
                         world[x - 1][y] = Tileset.WALL;
                     }
-                    if (world[x + 1][y] == Tileset.NOTHING) {
+                    if (world[x + 1][y].equals(Tileset.NOTHING)) {
                         world[x + 1][y] = Tileset.WALL;
                     }
-                    if (world[x][y - 1] == Tileset.NOTHING) {
+                    if (world[x][y - 1].equals(Tileset.NOTHING)) {
                         world[x][y - 1] = Tileset.WALL;
                     }
-                    if (world[x][y + 1] == Tileset.NOTHING) {
+                    if (world[x][y + 1].equals(Tileset.NOTHING)) {
                         world[x][y + 1] = Tileset.WALL;
                     }
-                    if (world[x - 1][y - 1] == Tileset.NOTHING) {
+                    if (world[x - 1][y - 1].equals(Tileset.NOTHING)) {
                         world[x - 1][y - 1] = Tileset.WALL;
                     }
-                    if (world[x + 1][y - 1] == Tileset.NOTHING) {
+                    if (world[x + 1][y - 1].equals(Tileset.NOTHING)) {
                         world[x + 1][y - 1] = Tileset.WALL;
                     }
-                    if (world[x - 1][y + 1] == Tileset.NOTHING) {
+                    if (world[x - 1][y + 1].equals(Tileset.NOTHING)) {
                         world[x - 1][y + 1] = Tileset.WALL;
                     }
-                    if (world[x + 1][y + 1] == Tileset.NOTHING) {
+                    if (world[x + 1][y + 1].equals(Tileset.NOTHING)) {
                         world[x + 1][y + 1] = Tileset.WALL;
                     }
                 }
@@ -124,19 +137,58 @@ public class World {
         while (true) {
             int doorX = RandomUtils.uniform(RANDOM, 1, world.length - 1);
             int doorY = RandomUtils.uniform(RANDOM, 1, world[0].length - 1);
-            if (world[doorX][doorY] == Tileset.WALL) {
-                if (world[doorX - 1][doorY] == Tileset.FLOOR
-                    && world[doorX + 1][doorY] == Tileset.NOTHING) {
+            if (world[doorX][doorY].equals(Tileset.WALL)) {
+                if (world[doorX - 1][doorY].equals(Tileset.FLOOR)
+                    && world[doorX + 1][doorY].equals(Tileset.NOTHING)) {
                     world[doorX][doorY] = Tileset.LOCKED_DOOR;
-                    break;
+                    return;
                 }
-                if (world[doorX][doorY - 1] == Tileset.FLOOR
-                    && world[doorX][doorY + 1] == Tileset.NOTHING) {
+                if (world[doorX][doorY - 1].equals(Tileset.FLOOR)
+                    && world[doorX][doorY + 1].equals(Tileset.NOTHING)) {
                     world[doorX][doorY] = Tileset.LOCKED_DOOR;
-                    break;
+                    return;
                 }
             }
         }
+    }
+
+    private Position addPlayer() {
+        while (true) {
+            int playerX = RandomUtils.uniform(RANDOM, 1, world.length - 1);
+            int playerY = RandomUtils.uniform(RANDOM, 1, world[0].length - 1);
+            if (world[playerX][playerY].equals(Tileset.FLOOR)) {
+                world[playerX][playerY] = Tileset.PLAYER;
+                return new Position(playerX, playerY);
+            }
+        }
+    }
+
+    public int movePlayer(char key) {
+        int x = player.x;
+        int y = player.y;
+        if (key == 'w') {
+            y += 1;
+        } else if (key == 'a') {
+            x -= 1;
+        } else if (key == 's') {
+            y -= 1;
+        } else if (key == 'd') {
+            x += 1;
+        }
+        if (world[x][y].equals(Tileset.FLOOR)) {
+            world[player.x][player.y] = Tileset.FLOOR;
+            world[x][y] = Tileset.PLAYER;
+            player.x = x;
+            player.y = y;
+            return 0;
+        } else if (world[x][y].equals(Tileset.LOCKED_DOOR)) {
+            world[player.x][player.y] = Tileset.FLOOR;
+            world[x][y] = Tileset.PLAYER;
+            player.x = x;
+            player.y = y;
+            return 1;
+        }
+        return -1;
     }
 
     public TETile[][] getFrame() {
